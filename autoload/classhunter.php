@@ -2,7 +2,7 @@
 /*
  * filehunter.php
  * 
- * Copyright 2020 Dieter Naujoks <devops@naujoks.homeip.net>
+ * Copyright 2020 Dieter Naujoks <devops@service.istmein.de>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,6 +112,37 @@ class classhunter extends _my_autoload_config
 		return $ret;
 	}
 
+	function test($_dyn_classes)
+	{
+		$ret=true;
+		if(is_array($_dyn_classes)and count($_dyn_classes))
+		{
+			foreach($_dyn_classes as $idx=>$file)
+			{
+				if(is_array($file))
+				{
+					error_log(_E_."object '".$idx."' declared more than once in ".implode(" and ",$file));
+					$ret=false;
+				}else{
+					if(!strlen($file))
+					{
+						error_log(_E_."object '".$idx."' filename is empty!");
+						$ret=false;
+					}else{
+						if(!is_readable($file))
+						{
+							error_log(_E_."object '".$idx."' declared in file: ".$file." is not readable!");
+							$ret=false;
+						}
+					}
+				}
+			}
+		}else{
+			error_log(_E_."no classes found!");
+		}
+		return $ret;
+	}
+
 	function find_classes()
 	{
 		$files=array();
@@ -137,6 +168,8 @@ class classhunter extends _my_autoload_config
 		$repl="";
 		foreach($_dyn_classes as $class=>$file)
 		{
+			// found saame object in more files: try to register the first
+			if(is_array($file)) $file=$file[0];
 			$repl.="\t\t'".$class."'=>'".$file."',\n";
 		}
 		$out=str_replace(parent::$needle,$repl,$autoload_templ);
@@ -144,7 +177,7 @@ class classhunter extends _my_autoload_config
 		{
 			error_log(_E_."File ".parent::$incl." not written!\n".$this->help(2));
 		}else{
-			print parent::$incl." written for ".count($_dyn_classes)."\n";
+			print parent::$incl." written for ".count($_dyn_classes)." objects\n";
 		}
 	}
 
@@ -203,7 +236,24 @@ if(!isset($GLOBALS["_al_nop"]))
 	switch(strtolower(substr($argv[1],0,3)))
 	{
 		case "tes":
-			print_r($ch->find_classes());
+			$classes=$ch->find_classes();
+			if(count($classes))
+			{
+				foreach($classes as $name=>$file)
+				{
+					if(!is_array($file))
+					{
+						print "object '".$name."'  >>  '".$file."'\n";
+					}
+				}
+			}
+			print "\n";
+			$res=$ch->test($classes);
+			if(!$res)
+			{
+				error_log("\nThere where errors!");
+				exit(1);
+			}
 			break;
 		case "get":
 			print $ch->ch_serialize($ch->find_classes())."\n";
