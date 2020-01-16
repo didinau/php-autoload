@@ -45,7 +45,7 @@ Installation example:
 		public static $ email = "root @ localhost";
 
 		// scripts to include allways
-		public static $ includeallways = array ("/ var / www / myphp / functions1.php", "/ var / www / myphp / functions1.php");
+		public static $ includeallways = array ("/var/www/myphp/functions1.php", "/var/www/myphp/functions1.php");
 
 		// configure ends here
 
