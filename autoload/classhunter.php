@@ -129,7 +129,7 @@ class classhunter extends _my_autoload_config
 						error_log(_E_."object '".$idx."' filename is empty!");
 						$ret=false;
 					}else{
-						if(!is_readable($file))
+						if(!is_readable(parent::$path.$file))
 						{
 							error_log(_E_."object '".$idx."' declared in file: ".$file." is not readable!");
 							$ret=false;
