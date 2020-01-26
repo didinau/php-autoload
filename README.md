@@ -6,27 +6,25 @@ README
 Installation example:
 
 
-1. Unzip the archive
+1. Create target directory
 
-	tar xfv dina-php-autoload.tar.gz
-
-2. Create target directory
-
-	Example: mkdir /usr/local/lib/phplibs
+	Example: mkdir /usr/local/myphplibs
+	Example: mkdir /usr/local/myphplibs/autoload
 
 3. Move to the right place
 
-	cd dina-php-autoload
-	mv autoload.php autoload /usr/local/lib/phplibs
+	cp autoload.php autoload /usr/local/myphplibs
+	cp autoload/classhunter.php /usr/local/myphplibs/autoload
+	cp autoload/static.classes.php.template /usr/local/myphplibs/autoload
 
 4. Storage of your class files
 
-	Create subfolders in the /usr/local/lib/phplibs directory
+	Create subfolders in the /usr/local/myphplibs directory
 	and copy your scripts there for the autoloader should be reachable.
 
 5. Configuration
 
-	Open the file autoload.php in the /usr/local/lib/phplibs directory
+	Open the file autoload.php in the /usr/local/myphplibs directory
 	and match the lines between
 		// configure starts here
 	and
@@ -45,7 +43,7 @@ Installation example:
 		public static $ email = "root @ localhost";
 
 		// scripts to include allways
-		public static $ includeallways = array ("/var/www/myphp/functions1.php", "/var/www/myphp/functions1.php");
+		public static $ includeallways = array ("/usr/local/myphplibs/myfunc.php", ...);
 
 		// configure ends here
 
@@ -60,12 +58,12 @@ Installation example:
 	public static $email="root@localhost";
 	Enter the email address for error notifications here or leave it blank
 
-	public static $includeallways=array("/var/www/myphp/functions1.php","/var/www/myphp/functions1.php");
+	public static $includeallways=array("/usr/local/myphplibs/myfunc.php", ...);
 	Enter the absolute path names of the php files to be always included here (maybe empty: array())
 
 6. Perform a search for the static creation
 
-	cd /usr/local/lib/phplibs/autoload
+	cd /usr/local/myphplibs/autoload
 
 	Test run:
 		php ./classhunter.php test
@@ -76,16 +74,15 @@ Installation example:
 7. Customize your php files
 
 	You only need one line in your php files for selective integration
-	all files in the subdirectories:
+	all files in the /usr/local/myphplibs subdirectories:
 
 	Example:
-	File /var/www/html/index.php in the web server directory
 
 	<?php
-	// Automatically include all required classes:
-	require_once "/usr/local/lib/phplibs/autoload.php";
-	$test=new test ();
-	...
+		// Automatically include all required classes:
+		require_once "/usr/local/myphplibs/autoload.php";
+		$test=new test ();
+		...
 	?>
 
 If you have any errors or questions: please contact me!
